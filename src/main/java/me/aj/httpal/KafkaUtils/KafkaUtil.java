@@ -81,11 +81,13 @@ public class KafkaUtil {
 					if (record.value().getService().endsWith("addArticleRating")) {
 						HttpResponse response = httpClient.executeService(record.value());
 						int respCode = response.getStatusLine().getStatusCode();
+						//Consume content to avoid IllegalStateException later. Just making sure connection is being released
+						response.getEntity().consumeContent();
 						if (Arrays.asList(HTTPAssemblyLineConstants.SERVICE_DOWN_CODES.split(","))
 								.contains(String.valueOf(respCode))) {
 							consumer.unsubscribe();
 							consumer.close();
-							handleServiceDownCase(response, record.value());
+							handleServiceDownCase(respCode, record.value());
 						} else {
 							if (System.currentTimeMillis()
 									- lastPolledAt > HTTPAssemblyLineConstants.SESSION_TIMEOUT_MS) {
@@ -119,9 +121,8 @@ public class KafkaUtil {
 	}
 	
 
-	public static void handleServiceDownCase(HttpResponse httpResponse, MyHTTPServletRequest httpRequest) {
+	public static void handleServiceDownCase(int respCode, MyHTTPServletRequest httpRequest) {
 		MyHttpClientPoolUtil httpClient = new MyHttpClientPoolUtil();
-		int respCode = httpResponse.getStatusLine().getStatusCode();
 		do {
 			try {
 				Thread.sleep(HTTPAssemblyLineConstants.HOST_DOWN_SLEEP);

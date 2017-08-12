@@ -27,6 +27,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.log4j.Logger;
 
+import me.aj.httpal.vo.DONT_CHECKIN;
 import me.aj.httpal.vo.HTTPAssemblyLineConstants;
 import me.aj.httpal.vo.MyHTTPServletRequest;
 
@@ -51,7 +52,7 @@ public class MyHttpClientPoolUtil {
 				try {
 					httpClient = getHttpClientInstance();
 				System.out.println("Going to " + httpRequest.getMethod() + " to "
-						+ HTTPAssemblyLineConstants.TARGET_SERVICE_BASE_PATH + "/" + httpRequest.getService());
+						+ DONT_CHECKIN.TARGET_SERVICE_BASE_PATH + "/" + httpRequest.getService());
 					if ("POST".equals(httpRequest.getMethod())) {
 						httppost = (HttpPost) setHeaders(httpRequest);
 						StringEntity input = new StringEntity(httpRequest.getPayLoad());
@@ -153,7 +154,7 @@ public class MyHttpClientPoolUtil {
 	}
 
 	private String getTargetURL(String serviceName) {
-		return HTTPAssemblyLineConstants.TARGET_SERVICE_BASE_PATH+"/"+serviceName;
+		return DONT_CHECKIN.TARGET_SERVICE_BASE_PATH+"/"+serviceName;
 	}
 
 	public boolean isItUpRightNow(MyHTTPServletRequest httpRequest) {
